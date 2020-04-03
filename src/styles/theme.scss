@@ -1,0 +1,52 @@
+@import 'variables';
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+
+$hab-orange-palette: (
+  50 : #fff0e0,
+  100 : #ffd9b3,
+  200 : #ffc080,
+  300 : #ffa74d,
+  400 : #ff9426,
+  500 : $hab-orange,
+  600 : #ff7900,
+  700 : #ff6e00,
+  800 : #ff6400,
+  900 : #ff5100,
+  A100 : $hab-white,
+  A200 : #fff6f2,
+  A400 : #ffd0bf,
+  A700 : #ffbca6,
+  contrast: (
+    50 : $hab-black,
+    100 : $hab-black,
+    200 : $hab-black,
+    300 : $hab-black,
+    400 : $hab-black,
+    500 : $hab-black,
+    600 : $hab-black,
+    700 : $hab-black,
+    800 : $hab-black,
+    900 : $hab-white,
+    A100 : $hab-black,
+    A200 : $hab-black,
+    A400 : $hab-black,
+    A700 : $hab-black,
+  )
+);
+
+$hab-app-primary: mat-palette($hab-orange-palette);
+$hab-app-accent:  mat-palette($hab-orange-palette, 200, 50, 300);
+
+// The warn palette is optional (defaults to red).
+$hab-app-warn:    mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$hab-app-theme: mat-light-theme($hab-app-primary, $hab-app-accent, $hab-app-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($hab-app-theme);

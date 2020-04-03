@@ -1,0 +1,13 @@
+// scss Variables
+$hab-orange:  #ff8100;
+$hab-black:   #000000;
+$hab-white:   #FFFFFF;
+$hab-gray:   #32404e;
+$hab-gray-hover:   #475360;
+$hab-text-gray:   #adb3b8;
+
+:host {
+  --hab-orange: #{$hab-orange};
+  --hab-black: #{$hab-black};
+  --hab-white: #{$hab-white};
+}
