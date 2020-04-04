@@ -1,0 +1,10 @@
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Captions</mat-label>
+    <input matInput [(ngModel)]="data.photo.captions">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button [mat-dialog-close]="data.photo" cdkFocusInitial>Ok</button>
+</div>

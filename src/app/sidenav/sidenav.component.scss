@@ -1,0 +1,48 @@
+@import "../../styles/variables";
+
+.app-mat-nav-list {
+  padding-left: 0px !important;
+}
+
+.app-mat-nav-list a{
+  color: $hab-text-gray  !important;
+  height: 64px;
+  font-size: 14px;
+  background-color: $hab-gray;
+}
+
+.app-mat-nav-list a:hover{
+  background-color: $hab-gray-hover !important;
+}
+
+.active-link{
+  border : 1px solid $hab-orange !important;
+}
+
+// .app-mat-nav-list-div {
+//   width: 100%; 
+//   background-color: $hab-orange
+// }
+
+
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+
+.app-nav-icon {
+  font-size: 17px;
+  width: 60px !important;
+  height: 57px !important;
+}
+
+.app-mat-nav-list-header {
+  width:250px; 
+  height: 65px; 
+  background-color: $hab-orange
+}
+
+.app-mat-toolbar {
+  background-color: $hab-white;
+}

@@ -14,7 +14,7 @@ export class AuthGuard implements CanActivate {
     
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
 
-    if (this.authService.isLogged()) {
+    if (localStorage.getItem('AUTH_TOKEN')) {
       this.authService.redirectUrl = null;
       return true;
     }

@@ -1,3 +1,10 @@
-<mat-card header="Home Component">
-  Home Component
-</mat-card>
+<div class="home-images-div-row">
+    <div class="home-images-div-column" *ngFor="let photo of photos" [ngStyle]="{'width.px': showWidth}">
+      <img [src]="photo.image" alt="Snow" [height]="photo.imageHeight" [width]="photo.imageWidth">
+      <h3 style="overflow-wrap: break-word">{{photo.captions}}</h3>
+      <div>
+        <button (click)="openEditDialog(photo)" mat-raised-button color="primary">Edit</button>&nbsp;&nbsp;
+        <button (click)="delete(photo)" mat-raised-button color="primary">Delete</button>
+      </div>
+    </div>
+</div>

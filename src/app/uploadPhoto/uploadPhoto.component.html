@@ -1,0 +1,21 @@
+<div class="parent">
+    <mat-card class="upload-card">
+        <mat-card-title class="center">
+            <form [formGroup]="uploadForm" class="center">
+            
+                <div class="upload-full-width">
+                    <input type="file" accept="image/*" (change)="uploadFile($event)"> 
+                </div>
+
+                <mat-form-field class="upload-full-width">
+                    <input matInput name="caption" id="caption" placeholder="Caption" formControlName="caption">
+                    <!-- <mat-error *ngIf="hasErrorLogin('caption', 'required')">"Caption is required"</mat-error>         -->
+                </mat-form-field>
+
+                <mat-error [textContent]="errorMessage"></mat-error>
+                <button class="upload-button" (click)="submit('final')" mat-raised-button color="primary" [disabled]="uploadForm.invalid">Upload</button>
+                <button class="upload-button" (click)="submit('draft')" mat-raised-button color="primary" [disabled]="uploadForm.invalid">Save as draft</button>
+            </form>
+        </mat-card-title>
+    </mat-card>   
+  </div>

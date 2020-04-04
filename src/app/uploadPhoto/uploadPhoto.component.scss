@@ -1,0 +1,36 @@
+
+  .upload-full-width {
+    width: 100%;
+    padding-top: 20px;
+  }
+
+  .upload-card {
+      width: 650px;
+      width: 450px;
+      margin: auto;
+  }
+
+  .upload-footer {
+      padding-top: 30px;
+      padding-bottom: 10px;
+  }
+
+  .upload-button {
+      margin-top: 30px;
+      margin-right: 30px;
+  }
+
+  .center {
+      text-align: center;
+      font-size: 16px;
+  }
+
+  .parent  {
+    display: flex;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin-top: -100px;
+  }

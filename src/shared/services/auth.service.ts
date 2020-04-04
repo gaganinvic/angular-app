@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CrudService } from './crud.service';
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class AuthService extends CrudService {
 
   token: string;
   redirectUrl: string;
+  isLoginSubject = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(http: HttpClient) { 
     super(http);
@@ -24,6 +26,8 @@ export class AuthService extends CrudService {
         this.token = response.token;
         console.log("login this.token : ", this.token)
         localStorage.setItem('AUTH_TOKEN', this.token);
+        localStorage.setItem('USERNAME', username);
+        this.isLoginSubject.next(true);
         return this.redirectUrl || '';
     } catch (error) {
         console.error('Error during login request', error);
@@ -38,10 +42,16 @@ export class AuthService extends CrudService {
   public logout() {
       this.token = '';
       localStorage.removeItem('AUTH_TOKEN');
+      localStorage.removeItem('USERNAME');
+      this.isLoginSubject.next(false);
   }
 
-  public isLogged(): boolean {
-      return this.token.length > 0;
+  private hasToken() : boolean {
+    return !!localStorage.getItem('AUTH_TOKEN');
+  }
+
+  isLoggedIn() : Observable<boolean> {
+    return this.isLoginSubject.asObservable();
   }
 
   public async register(username: string, password: string, email: string) {

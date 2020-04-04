@@ -29,6 +29,18 @@ export abstract class CrudService<T = any> {
         return response;
     }
 
+    public async put(url, body): Promise<any> {
+      let response = null;
+      try {
+          response = await this.http
+              .put(`${environment.apiUrl}/${url}`, body)
+              .toPromise();
+      } catch (error) {
+          response = this.errorHandler('PUT', url , error);
+      }
+      return response;
+    }
+
     public async delete(url): Promise<any> {
         let response = null;
         try {

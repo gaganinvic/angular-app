@@ -1,0 +1,47 @@
+<mat-sidenav-container class="app-container" fullscreen>
+  <mat-sidenav mode="side">
+    <div class="app-mat-nav-list-header">
+
+    </div>
+    <mat-nav-list class="app-mat-nav-list">
+      <div class="app-mat-nav-list-div">
+        <a mat-list-item routerLinkActive="active-link" style="font-size:14px; " routerLink="home"
+          *ngIf="(isLoggedIn | async)">
+         Photos
+        </a>
+      </div>
+      <div class="app-mat-nav-list-div">
+        <a mat-list-item routerLinkActive="active-link" style="font-size:14px;" routerLink="upload"
+          *ngIf="(isLoggedIn | async)">
+          Upload Photos
+        </a>
+      </div>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar class="app-mat-toolbar">
+      <mat-toolbar-row>
+        <span *ngIf="(isLoggedIn | async)">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+        </span>
+        <span class="toolbar-spacer"></span>
+        <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="(isLoggedIn | async)">
+          <mat-icon class="toolbar-icon">account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item routerLink="logout">
+            <mat-icon>power_settings_new</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

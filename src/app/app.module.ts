@@ -6,7 +6,10 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import {LoginComponent} from './login/login.component';
-import {HomeComponent} from './home/home.component';
+import {HomeComponent, EditDialog} from './home/home.component';
+import { LogoutComponent } from './logout/logout.component';
+import {UploadPhotoComponent} from './uploadPhoto/uploadPhoto.component';
+import { SidenavComponent } from './sidenav/sidenav.component';
 import {CustomMaterial} from '../shared/modules/custom-material/custom-material';
 
 import { ErrorInterceptor } from '../shared/interceptors/error.interceptor';
@@ -16,7 +19,11 @@ import { JwtInterceptor } from '../shared/interceptors/jwt.interceptor';
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    EditDialog,
+    SidenavComponent,
+    UploadPhotoComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,
@@ -26,6 +33,9 @@ import { JwtInterceptor } from '../shared/interceptors/jwt.interceptor';
     FormsModule,
     ReactiveFormsModule,
     CustomMaterial
+  ],
+  entryComponents: [
+    EditDialog
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
