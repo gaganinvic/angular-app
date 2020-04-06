@@ -7,10 +7,11 @@ import { AuthService } from '../shared/services/auth.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'angular-app';
+  //title = 'angular-app';
+  authService: AuthService;
 
-  constructor(authService: AuthService) { 
-    authService = authService
+  constructor(auth: AuthService) { 
+    this.authService = auth
   }
 
 
