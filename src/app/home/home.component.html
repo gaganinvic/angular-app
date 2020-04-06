@@ -1,7 +1,59 @@
+
+<form [formGroup]="searchForm" class="center">
+
+    <mat-form-field appearance="outline" class="home-search-form-field">
+      <mat-label>Users</mat-label>
+      <mat-select formControlName="selectedUser">
+        <mat-option *ngFor="let user of allUsers" [value]="user">
+          {{user.username}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="home-search-form-field">
+      <mat-label>Dimension Width</mat-label>
+      <mat-select formControlName="selectedWidth">
+        <mat-option *ngFor="let width of widths" [value]="width">
+          {{width.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="home-search-form-field">
+      <mat-label>Photo Type</mat-label>
+      <mat-select formControlName="selectedType">
+        <mat-option *ngFor="let types of typess" [value]="types">
+          {{types.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="home-search-form-field">
+        <mat-label>Sort By</mat-label>
+        <mat-select formControlName="selectedSort">
+          <mat-option *ngFor="let sort of sorts" [value]="sort">
+            {{sort.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="home-search-form-field">
+          <mat-label>Sort Value</mat-label>
+          <mat-select formControlName="selectedSortValue">
+            <mat-option *ngFor="let sortValue of sortsValue" [value]="sortValue">
+              {{sortValue.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+    <button class="login-button" (click)="search()" mat-raised-button color="primary">Search</button>
+</form>
+
 <div class="home-images-div-row">
     <div class="home-images-div-column" *ngFor="let photo of photos" [ngStyle]="{'width.px': showWidth}">
       <img [src]="photo.image" alt="Snow" [height]="photo.imageHeight" [width]="photo.imageWidth">
-      <h3 style="overflow-wrap: break-word">{{photo.captions}}</h3>
+      <h3 style="overflow-wrap: break-word">Type : {{photo.status}}</h3>
+      <h3 style="overflow-wrap: break-word">Caption : {{photo.captions}}</h3>
       <div>
         <button (click)="openEditDialog(photo)" mat-raised-button color="primary">Edit</button>&nbsp;&nbsp;
         <button (click)="delete(photo)" mat-raised-button color="primary">Delete</button>

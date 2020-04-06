@@ -1,6 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
+import { UserPhotosService } from '../../shared/services/photos.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { typesModel, widthsModel, userModel, sortParams, sortsValueParams } from '../../shared/models/user';
 
 export interface DialogData {
   photo: any;
@@ -15,32 +18,105 @@ export class HomeComponent implements OnInit {
 
   photos;
   receivedPhotos;
-  showHeight: number = 300;
-  showWidth: number = 300;
+  showHeight: number;
+  showWidth: number;
+  searchForm: FormGroup;
+  widths;
+  typess;
+  sorts;
+  sortsValue;
+  allUsers;
+  allPhotos;
 
-  constructor(private userService: UserService, private dialog: MatDialog) { }
+  constructor(private userService: UserService, private userPhotosService: UserPhotosService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.getPhotos();
+    //this.getPhotos();
+    this.getAllUsers();
+    this.getAllPhotos();
+    this.typess = typesModel;
+    this.widths = widthsModel;
+    this.sorts = sortParams;
+    this.sortsValue = sortsValueParams
+    this.searchForm = new FormGroup({
+      selectedUser: new FormControl(''),
+      selectedWidth: new FormControl(this.widths[0]),
+      selectedType: new FormControl(this.typess[0]),
+      selectedSort: new FormControl(this.sorts[0]),
+      selectedSortValue: new FormControl(this.sortsValue[0])
+    });
   }
 
-  async getPhotos() {
+  async getAllPhotos() {
     try {
-      this.photos = await this.userService.getPhotos();
-      this.receivedPhotos = Object.assign({}, this.photos)
-      console.log("this.photos:: ", this.photos);
+      this.allPhotos = await this.userPhotosService.getAllPhotos();
+      this.receivedPhotos = Object.assign({}, this.allPhotos)
+      console.log("New this.photos :", this.allPhotos)
+      this.getPhotos(localStorage.getItem('USERNAME'), 'all', 'all', 'createdAt', 'asc');
+    } catch (e) {
+      console.error('Unable to get photos!\n', e);
+    }
+  }
+
+  async getAllUsers() {
+    try {
+      this.allUsers = await this.userService.getAllUsers();
+      this.allUsers.unshift(userModel)
+      let currentUser = this.allUsers.filter((user) => {return user.username == localStorage.getItem('USERNAME')})
+      console.log("currentUser is :", currentUser)
+      this.searchForm.patchValue({
+        selectedUser: currentUser[0]
+      });
+      console.log("New this.users :", this.allUsers)
+    } catch (e) {
+      console.error('Unable to Get Users!\n', e);
+    }
+  }
+
+  async getPhotos(username, status, dimensions, sort, sortValue) {
+    console.log("username, status, dimensions, sort, sortValue : ", username, status, dimensions, sort, sortValue)
+    try {
+      if(username == 'All' && status == 'all'){
+        this.photos = this.allPhotos;
+        this.photos = this.dynamiceSortFunction(this.photos, sort, sortValue);
+      } else if(username == 'All'){
+        this.photos = this.allPhotos.filter((photo) => {return photo.status == status})
+        this.photos = this.dynamiceSortFunction(this.photos, sort, sortValue);
+      } else if(status == 'all') {
+        this.photos = this.allPhotos.filter((photo) => {return photo.username == username})
+        this.photos = this.dynamiceSortFunction(this.photos, sort, sortValue);
+      } else {
+        this.photos = this.allPhotos.filter((photo) => {return photo.username == username && photo.status == status})
+        this.photos = this.dynamiceSortFunction(this.photos, sort, sortValue);
+      }
+
+      //this.photos = this.allPhotos.filter((photo) => {return photo.username == username})
       this.photos.forEach((photo) => {
-        
         photo.image = 'data:' + photo.imageType + ';base64,' + this.arrayBufferToBase64(photo.imageData.data);
-        if(this.showHeight && this.showWidth ){
-          photo.imageHeight = this.showHeight
-          photo.imageWidth = this.showWidth
+        if(dimensions != 'all'){
+          photo.imageHeight = this.showHeight = dimensions;
+          photo.imageWidth = this.showHeight = dimensions;
+        } else{
+          this.showHeight = null;
+          this.showHeight = null;
         }
         console.log("final photo is:", photo);
       });
     } catch (e) {
         console.error('Unable to get Photos!\n', e);
     }
+  }
+
+  dynamiceSortFunction(photosToSort, field, sortValue) {
+    this.photos = this.photos.sort((a,b) => {
+      console.log("a.sort : b.sort",a[field], b[field]); 
+      let value = a[field] > b[field] ? 1 : a[field] < b[field] ? -1 : 1
+      if(sortValue == 'desc'){
+        return value * -1
+      }
+      return value
+    });
+    return this.photos;
   }
 
   arrayBufferToBase64(buffer) {
@@ -58,7 +134,6 @@ export class HomeComponent implements OnInit {
       width: '250px',
       data: {photo: photo}
     });
-
     dialogRef.afterClosed().subscribe(result => {
       photo = result;
       console.log("New edited photo : ",photo);
@@ -69,7 +144,7 @@ export class HomeComponent implements OnInit {
   async update(photo) {
     console.log("Caption to be updated : ", photo);
     try {
-      const updatedPhoto = await this.userService.updatePhotos(photo.photoId, {captions: photo.captions});
+      const updatedPhoto = await this.userPhotosService.updatePhotos(photo.photoId, {captions: photo.captions});
       let foundIndex = this.photos.findIndex(photo => photo.photoId == updatedPhoto.photoId);
       this.photos[foundIndex].captions = updatedPhoto.captions;
       console.log("New this.photos :", this.photos)
@@ -81,22 +156,27 @@ export class HomeComponent implements OnInit {
   async delete(photoRemove) {
     console.log("Photo to be deleted : ", photoRemove);
     try {
-      await this.userService.deletePhotos(photoRemove.photoId);
+      await this.userPhotosService.deletePhotos(photoRemove.photoId);
       this.photos = this.photos.filter((photo) => {return photoRemove.photoId != photo.photoId})
       console.log("New this.photos :", this.photos)
     } catch (e) {
       console.error('Unable to delete photo!\n', e);
     }
   }
+
+  async search() {
+    console.log("width selectecd : ", this.searchForm.value);
+    this.getPhotos(this.searchForm.value.selectedUser.username, this.searchForm.value.selectedType.id, this.searchForm.value.selectedWidth.id, this.searchForm.value.selectedSort.id, this.searchForm.value.selectedSortValue.id)
+
+  }
 }
-
-
 
 
 @Component({
   selector: 'app-homeDialog',
   templateUrl: 'homeDialog.html',
 })
+
 export class EditDialog {
 
   constructor(

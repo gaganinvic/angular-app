@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UserService } from '../../shared/services/user.service';
+import { UserPhotosService } from '../../shared/services/photos.service';
 
 @Component({
   selector: 'app-upload-photo',
@@ -18,7 +18,7 @@ export class UploadPhotoComponent implements OnInit {
   status: string;
   errorMessage: string;
 
-  constructor(private router: Router, private userService: UserService) { }
+  constructor(private router: Router, private userPhotosService: UserPhotosService) { }
 
   ngOnInit() {
     this.errorMessage = '';
@@ -57,7 +57,7 @@ export class UploadPhotoComponent implements OnInit {
       formData.append("imageHeight", this.imageHeight);
       formData.append("imageWidth", this.imageWidth);
       formData.append("status", status);
-      const response = await this.userService.uploadPhotos(formData)
+      const response = await this.userPhotosService.uploadPhotos(formData)
       console.log("response:: ", response);
       this.fileToUpload = null;
       this.router.navigate(['/home'])
