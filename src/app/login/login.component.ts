@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 import { AuthService } from '../../shared/services/auth.service';
 
@@ -19,6 +20,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private router: Router,
+    private _snackBar: MatSnackBar,
     private authService: AuthService) { 
 
     }
@@ -52,20 +54,28 @@ export class LoginComponent implements OnInit {
 
   public async login() {
     try {
+        this.authService.showLoader = true
         const url = await this.authService.login(this.loginForm.value.username, this.loginForm.value.password)
+        this.authService.showLoader = false
         this.router.navigate([url])
     } catch (e) {
-        this.errorMessage = 'Wrong Credentials!';
+        this.authService.showLoader = false
+        this.errorMessage = e;
         console.error('Unable to Login!\n', e);
     }
   }
 
   public async register() {
     try {
+        this.authService.showLoader = true
         const user = await this.authService.register(this.registerForm.value.username, this.registerForm.value.password, this.registerForm.value.email)
+        this.authService.showLoader = false
+        this.authService.snackBar("User successfully registered", "success");
         location.reload();
     } catch (e) {
+        this.authService.showLoader = false
         this.errorMessage = e;
+        this.authService.snackBar("Unable to Register. Try after some time", "error");
         console.error('Unable to register!\n', e);
     }
   }

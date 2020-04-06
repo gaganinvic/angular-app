@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CrudService } from './crud.service';
 import { BehaviorSubject, Observable } from "rxjs";
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,9 @@ export class AuthService extends CrudService {
   token: string;
   redirectUrl: string;
   isLoginSubject = new BehaviorSubject<boolean>(this.hasToken());
+  showLoader = false;
 
-  constructor(http: HttpClient) { 
+  constructor(http: HttpClient, private _snackBar: MatSnackBar) { 
     super(http);
     this.token = localStorage.getItem('AUTH_TOKEN') || '';
   }
@@ -62,6 +64,10 @@ export class AuthService extends CrudService {
         console.error('Error during register request', error);
         return Promise.reject(error);
     }
+  }
+
+  public snackBar(message, action) {
+    this._snackBar.open(message, "", {duration: 5000, horizontalPosition: 'end', verticalPosition: 'top', panelClass: "app-snackBar-"+action});
   }
 
 }

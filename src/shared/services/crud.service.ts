@@ -12,7 +12,8 @@ export abstract class CrudService<T = any> {
                 .get<G>(`${environment.apiUrl}/${url}`)
                 .toPromise();
         } catch (error) {
-            response = this.errorHandler('GET', url ,error);
+          console.log("Error in Get new : ", error)
+          throw(error.error || error.message || error.statusText)
         }
         return response;
     }
@@ -24,7 +25,8 @@ export abstract class CrudService<T = any> {
                 .post(`${environment.apiUrl}/${url}`, body)
                 .toPromise();
         } catch (error) {
-            response = this.errorHandler('POST', url , error);
+            console.log("Error in POST new : ", error)
+            throw(error.error || error.message || error.statusText)
         }
         return response;
     }
@@ -36,7 +38,8 @@ export abstract class CrudService<T = any> {
               .put(`${environment.apiUrl}/${url}`, body)
               .toPromise();
       } catch (error) {
-          response = this.errorHandler('PUT', url , error);
+        console.log("Error in PUT new : ", error)
+        throw(error.error || error.message || error.statusText)
       }
       return response;
     }
@@ -48,20 +51,10 @@ export abstract class CrudService<T = any> {
                 .delete(`${environment.apiUrl}/${url}`)
                 .toPromise();
         } catch (error) {
-            response = this.errorHandler('DELETE', url , error);
+          console.log("Error in DELETE new : ", error)
+          throw(error.error || error.message || error.statusText)
         }
         return response;
     }
 
-    public errorHandler(
-        method: string,
-        error: HttpErrorResponse,
-        url: string
-    ): Promise<never> {
-        console.error(
-            `Error occurred during ${method} ${environment.apiUrl}/${url}`,
-            error
-        );
-        return Promise.reject(error);
-    }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserPhotosService } from '../../shared/services/photos.service';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-upload-photo',
@@ -18,7 +19,7 @@ export class UploadPhotoComponent implements OnInit {
   status: string;
   errorMessage: string;
 
-  constructor(private router: Router, private userPhotosService: UserPhotosService) { }
+  constructor(private router: Router, private userPhotosService: UserPhotosService, private authService: AuthService) { }
 
   ngOnInit() {
     this.errorMessage = '';
@@ -51,6 +52,7 @@ export class UploadPhotoComponent implements OnInit {
   async submit(status) {
     console.log("this.fileToUpload :::", this.fileToUpload)
     try {
+      this.authService.showLoader = true;
       const formData: any = new FormData();
       formData.append("captions", this.uploadForm.value.caption);
       formData.append("photo", this.fileToUpload);
@@ -58,11 +60,14 @@ export class UploadPhotoComponent implements OnInit {
       formData.append("imageWidth", this.imageWidth);
       formData.append("status", status);
       const response = await this.userPhotosService.uploadPhotos(formData)
+      this.authService.showLoader = false;
+      this.authService.snackBar("Photo successfully uploaded", "success");
       console.log("response:: ", response);
       this.fileToUpload = null;
       this.router.navigate(['/home'])
     } catch (e) {
-        this.errorMessage = 'Upload file failed. Please try again!';
+        this.authService.showLoader = false;
+        this.authService.snackBar("Upload file failed. Please try again!", "error");
         console.error('Upload file failed. Please try again!\n', e);
     }
   }

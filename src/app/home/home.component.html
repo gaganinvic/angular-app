@@ -50,10 +50,12 @@
 </form>
 
 <div class="home-images-div-row">
+    <h1 *ngIf="photos && photos.length <= 0">No photos found. Please go to "Upload Photos" and upload a photo</h1>
     <div class="home-images-div-column" *ngFor="let photo of photos" [ngStyle]="{'width.px': showWidth}">
       <img [src]="photo.image" alt="Snow" [height]="photo.imageHeight" [width]="photo.imageWidth">
-      <h3 style="overflow-wrap: break-word">Type : {{photo.status}}</h3>
-      <h3 style="overflow-wrap: break-word">Caption : {{photo.captions}}</h3>
+      <h4 style="overflow-wrap: break-word">User : {{photo.username}}</h4>
+      <h4 style="overflow-wrap: break-word">Type : {{photo.status}}</h4>
+      <h4 style="overflow-wrap: break-word">Caption : {{photo.captions}}</h4>
       <div>
         <button (click)="openEditDialog(photo)" mat-raised-button color="primary">Edit</button>&nbsp;&nbsp;
         <button (click)="delete(photo)" mat-raised-button color="primary">Delete</button>

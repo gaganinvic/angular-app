@@ -20,3 +20,10 @@
 
 <app-sidenav></app-sidenav>
 <!-- <router-outlet></router-outlet> -->
+<div *ngIf="authService.showLoader" >
+  <div class="eo-loading">
+    <div>
+      <img src="assets/img/spinner.png" width="50px">
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { UserService } from '../../shared/services/user.service';
 import { UserPhotosService } from '../../shared/services/photos.service';
+import { AuthService } from '../../shared/services/auth.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { typesModel, widthsModel, userModel, sortParams, sortsValueParams } from '../../shared/models/user';
@@ -28,7 +29,7 @@ export class HomeComponent implements OnInit {
   allUsers;
   allPhotos;
 
-  constructor(private userService: UserService, private userPhotosService: UserPhotosService, private dialog: MatDialog) { }
+  constructor(private userService: UserService, private userPhotosService: UserPhotosService, private authService: AuthService, private dialog: MatDialog) { }
 
   ngOnInit() {
     //this.getPhotos();
@@ -49,17 +50,21 @@ export class HomeComponent implements OnInit {
 
   async getAllPhotos() {
     try {
+      this.authService.showLoader = true;
       this.allPhotos = await this.userPhotosService.getAllPhotos();
       this.receivedPhotos = Object.assign({}, this.allPhotos)
       console.log("New this.photos :", this.allPhotos)
       this.getPhotos(localStorage.getItem('USERNAME'), 'all', 'all', 'createdAt', 'asc');
     } catch (e) {
+      this.authService.showLoader = false;
       console.error('Unable to get photos!\n', e);
+      this.authService.snackBar("Unable to get photos", "error");
     }
   }
 
   async getAllUsers() {
     try {
+      this.authService.showLoader = true;
       this.allUsers = await this.userService.getAllUsers();
       this.allUsers.unshift(userModel)
       let currentUser = this.allUsers.filter((user) => {return user.username == localStorage.getItem('USERNAME')})
@@ -69,12 +74,15 @@ export class HomeComponent implements OnInit {
       });
       console.log("New this.users :", this.allUsers)
     } catch (e) {
+      this.authService.showLoader = false;
       console.error('Unable to Get Users!\n', e);
+      this.authService.snackBar("Unable to get users", "error");
     }
   }
 
   async getPhotos(username, status, dimensions, sort, sortValue) {
     console.log("username, status, dimensions, sort, sortValue : ", username, status, dimensions, sort, sortValue)
+    this.authService.showLoader = true;
     try {
       if(username == 'All' && status == 'all'){
         this.photos = this.allPhotos;
@@ -102,7 +110,10 @@ export class HomeComponent implements OnInit {
         }
         console.log("final photo is:", photo);
       });
+      this.authService.showLoader = false;
     } catch (e) {
+        this.authService.showLoader = false;
+        this.authService.snackBar("Unable to load photos", "error");
         console.error('Unable to get Photos!\n', e);
     }
   }
@@ -130,6 +141,10 @@ export class HomeComponent implements OnInit {
   }
 
   openEditDialog(photo): void {
+    if(photo.username != localStorage.getItem("USERNAME")){
+      this.authService.snackBar("You cannot update photo of another user", "error");
+      return;
+    }
     const dialogRef = this.dialog.open(EditDialog, {
       width: '250px',
       data: {photo: photo}
@@ -144,11 +159,16 @@ export class HomeComponent implements OnInit {
   async update(photo) {
     console.log("Caption to be updated : ", photo);
     try {
+      this.authService.showLoader = true;
       const updatedPhoto = await this.userPhotosService.updatePhotos(photo.photoId, {captions: photo.captions});
       let foundIndex = this.photos.findIndex(photo => photo.photoId == updatedPhoto.photoId);
       this.photos[foundIndex].captions = updatedPhoto.captions;
+      let foundIndexAll = this.allPhotos.findIndex(photo => photo.photoId == updatedPhoto.photoId);
+      this.allPhotos[foundIndexAll].captions = updatedPhoto.captions;
       console.log("New this.photos :", this.photos)
+      this.authService.showLoader = false;
     } catch (e) {
+      this.authService.showLoader = false;
       console.error('Unable to delete photo!\n', e);
     }
   }
@@ -156,10 +176,18 @@ export class HomeComponent implements OnInit {
   async delete(photoRemove) {
     console.log("Photo to be deleted : ", photoRemove);
     try {
+      if(photoRemove.username != localStorage.getItem("USERNAME")){
+        this.authService.snackBar("You cannot delete photo of another user", "error");
+        return;
+      }
+      this.authService.showLoader = true;
       await this.userPhotosService.deletePhotos(photoRemove.photoId);
       this.photos = this.photos.filter((photo) => {return photoRemove.photoId != photo.photoId})
+      this.allPhotos = this.allPhotos.filter((photo) => {return photoRemove.photoId != photo.photoId})
       console.log("New this.photos :", this.photos)
+      this.authService.showLoader = false;
     } catch (e) {
+      this.authService.showLoader = false;
       console.error('Unable to delete photo!\n', e);
     }
   }
@@ -167,7 +195,6 @@ export class HomeComponent implements OnInit {
   async search() {
     console.log("width selectecd : ", this.searchForm.value);
     this.getPhotos(this.searchForm.value.selectedUser.username, this.searchForm.value.selectedType.id, this.searchForm.value.selectedWidth.id, this.searchForm.value.selectedSort.id, this.searchForm.value.selectedSortValue.id)
-
   }
 }
 
