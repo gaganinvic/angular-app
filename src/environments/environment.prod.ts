@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: "http://localhost:3000"
+  apiUrl: "https://frozen-hollows-12191.herokuapp.com"
 };
